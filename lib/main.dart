@@ -81,7 +81,32 @@ class MyApp extends StatelessWidget {
               height: 100,
             ),
             Container(
-              margin: EdgeInsets.only(left: 30, right: 30, bottom: 30), // 좌우, 하단 마진만 설정
+              margin: EdgeInsets.only(left: 30, right: 30, bottom: 30),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.asset(
+                        "assets/aripay.png",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 20,
+                    left: 30,
+                    child: Text(
+                      "문의하기",
+                      style: TextStyle(
+                        color: Colors.black45,
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(20), // 하단 왼쪽 모서리 둥글게
