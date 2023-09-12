@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  url_launcher: ^6.0.6 # 버전은 패키지의 최신 버전에 맞게 설정하세요.
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -39,6 +40,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -62,3 +64,4 @@ flutter:
   assets:
      - assets/AriPayL.png
      - assets/404.png
+     - assets/AriPayL_ver2.png

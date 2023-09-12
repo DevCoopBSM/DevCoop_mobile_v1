@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:aripay/login.dart';
 
 void main() {
   runApp(Login());
@@ -93,6 +92,18 @@ class Login extends StatelessWidget {
                   textStyle: TextStyle(
                     fontSize: 16, // 버튼 텍스트의 크기
                     fontWeight: FontWeight.bold, // 버튼 텍스트의 굵기
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(5),
+              ),
+              Container(
+                child: Text(
+                  "학교이메일(@bssm.hs.kr)으로만 로그인이 가능합니다",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 13,
                   ),
                 ),
               ),

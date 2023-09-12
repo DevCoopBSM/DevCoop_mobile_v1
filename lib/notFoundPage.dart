@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:aripay/login.dart';
 
 void main() {
   runApp(NotFound());
