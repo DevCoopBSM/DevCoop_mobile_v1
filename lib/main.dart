@@ -64,6 +64,14 @@ class MyApp extends StatelessWidget {
                   topRight: Radius.circular(20), // 하단 오른쪽 모서리 둥글게
                 ),
                 color: Color.fromRGBO(65, 67, 76, 1.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5), // 그림자 색상 및 투명도 설정
+                    spreadRadius: 2, // 그림자 확산 범위
+                    blurRadius: 2, // 그림자 흐림 정도
+                    offset: Offset(2, 4), // 그림자의 위치 (x, y)
+                  ),
+                ],
               ),
               width: 400,
               height: 180,
@@ -76,6 +84,14 @@ class MyApp extends StatelessWidget {
                   bottomRight: Radius.circular(20), // 하단 오른쪽 모서리 둥글게
                 ),
                 color: Color.fromRGBO(52, 52, 60, 1.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5), // 그림자 색상 및 투명도 설정
+                    spreadRadius: 2, // 그림자 확산 범위
+                    blurRadius: 2, // 그림자 흐림 정도
+                    offset: Offset(2, 4), // 그림자의 위치 (x, y)
+                  ),
+                ],
               ),
               width: 400,
               height: 100,
@@ -115,6 +131,14 @@ class MyApp extends StatelessWidget {
                   topRight: Radius.circular(20),
                 ),
                 color: Colors.lightBlue,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5), // 그림자 색상 및 투명도 설정
+                    spreadRadius: 2, // 그림자 확산 범위
+                    blurRadius: 2, // 그림자 흐림 정도
+                    offset: Offset(2, 4), // 그림자의 위치 (x, y)
+                  ),
+                ],
               ),
               width: 400,
               height: 150,
@@ -131,6 +155,14 @@ class MyApp extends StatelessWidget {
                     topRight: Radius.circular(20),
                   ),
                   color: Color.fromRGBO(240, 206, 0, 1.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5), // 그림자 색상 및 투명도 설정
+                      spreadRadius: 2, // 그림자 확산 범위
+                      blurRadius: 2, // 그림자 흐림 정도
+                      offset: Offset(2, 4), // 그림자의 위치 (x, y)
+                    ),
+                  ],
                 ),
                 child: Padding(
                   padding: EdgeInsets.only(left: 20.0), // 왼쪽 마진 설정
