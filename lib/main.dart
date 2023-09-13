@@ -8,12 +8,18 @@ void main() => runApp(
   ),
 );
 
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key});
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  @override
+  _MyAppState createState() => _MyAppState();
+}
 
+class _MyAppState extends State<MyApp> {
   // 외부 URL
   final String externalUrl = 'https://www.instagram.com/bsm_devcoop';
+
+  bool isLoggedIn = true; // 로그인 상태를 관리할 변수
 
   // 클릭 이벤트 처리
   void _launchURL() async {
@@ -24,14 +30,25 @@ class MyApp extends StatelessWidget {
     }
   }
 
+  // 로그아웃 처리 함수
+  void _handleLogout() {
+    // 여기에서 로그아웃 로직을 구현하세요.
+    // 예를 들어, 사용자 인증 토큰을 삭제하거나 로그아웃 API를 호출할 수 있습니다.
+
+    // 사용자 로그아웃 상태로 변경
+    setState(() {
+      isLoggedIn = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(// AppBar를 사용하여 헤더 생성
+        appBar: AppBar(
           backgroundColor: Colors.white,
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.start, // 이미지를 왼쪽으로 정렬
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Image.asset(
                 "assets/AriPayL_ver2.png",
@@ -42,55 +59,98 @@ class MyApp extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                // 여기에 로그인 페이지로 이동하는 코드를 추가하세요.
-                // 예를 들어, Navigator를 사용하여 새로운 화면으로 이동할 수 있습니다.
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+                if (isLoggedIn) {
+                  _handleLogout(); // 로그아웃 함수 호출
+                } else {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+                }
               },
               child: Text(
-                "로그인",
+                isLoggedIn ? "로그아웃" : "로그인",
                 style: TextStyle(
-                  color: Colors.black, // 텍스트 색상을 원하는 대로 변경하세요.
+                  color: Colors.black,
                 ),
               ),
             ),
           ],
         ),
         body: Column(
-          children: <Widget> [
+          children: <Widget>[
             Container(
-              margin: EdgeInsets.only(left: 30, right: 30, top: 20), // 좌우 마진 30, 상단과 하단 마진은 여전히 30
+              margin: EdgeInsets.only(left: 30, right: 30, top: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20), // 하단 왼쪽 모서리 둥글게
-                  topRight: Radius.circular(20), // 하단 오른쪽 모서리 둥글게
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
                 color: Color.fromRGBO(65, 67, 76, 1.0),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5), // 그림자 색상 및 투명도 설정
-                    spreadRadius: 2, // 그림자 확산 범위
-                    blurRadius: 2, // 그림자 흐림 정도
-                    offset: Offset(2, 4), // 그림자의 위치 (x, y)
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 2,
+                    offset: Offset(2, 4),
                   ),
                 ],
               ),
               width: 400,
               height: 180,
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 10, right: 140, top: 40),
+                    child: Text(
+                      "현재 사용가능한 금액 〉",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: isLoggedIn ? EdgeInsets.only(left: 10, right: 130, top: 30) : EdgeInsets.only(left: 10, right: 35, top: 30),
+                    child: Text(
+                      isLoggedIn ? "남은금액 : " : "로그인을 해주세요",
+                      style: TextStyle(
+                        fontSize: 35,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             Container(
-              margin: EdgeInsets.only(left: 30, right: 30, bottom: 30), // 좌우, 하단 마진만 설정
+              margin: EdgeInsets.only(left: 30, right: 30, bottom: 30),
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 10, right: 160, top: 40),
+                    child: Text(
+                      "사용내역 보러가기 〉",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20), // 하단 왼쪽 모서리 둥글게
-                  bottomRight: Radius.circular(20), // 하단 오른쪽 모서리 둥글게
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
                 ),
                 color: Color.fromRGBO(52, 52, 60, 1.0),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5), // 그림자 색상 및 투명도 설정
-                    spreadRadius: 2, // 그림자 확산 범위
-                    blurRadius: 2, // 그림자 흐림 정도
-                    offset: Offset(2, 4), // 그림자의 위치 (x, y)
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 2,
+                    offset: Offset(2, 4),
                   ),
                 ],
               ),
@@ -126,18 +186,18 @@ class MyApp extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20), // 하단 왼쪽 모서리 둥글게
-                  bottomRight: Radius.circular(20), // 하단 오른쪽 모서리 둥글게
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
                 ),
                 color: Colors.lightBlue,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5), // 그림자 색상 및 투명도 설정
-                    spreadRadius: 2, // 그림자 확산 범위
-                    blurRadius: 2, // 그림자 흐림 정도
-                    offset: Offset(2, 4), // 그림자의 위치 (x, y)
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 2,
+                    offset: Offset(2, 4),
                   ),
                 ],
               ),
@@ -147,36 +207,36 @@ class MyApp extends StatelessWidget {
             GestureDetector(
               onTap: _launchURL,
               child: Container(
-                margin: EdgeInsets.only(left: 30, right: 30, bottom: 30), // 좌우, 하단 마진만 설정
+                margin: EdgeInsets.only(left: 30, right: 30, bottom: 30),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20), // 하단 왼쪽 모서리 둥글게
-                    bottomRight: Radius.circular(20), // 하단 오른쪽 모서리 둥글게
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20),
                   ),
                   color: Color.fromRGBO(240, 206, 0, 1.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), // 그림자 색상 및 투명도 설정
-                      spreadRadius: 2, // 그림자 확산 범위
-                      blurRadius: 2, // 그림자 흐림 정도
-                      offset: Offset(2, 4), // 그림자의 위치 (x, y)
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 2,
+                      offset: Offset(2, 4),
                     ),
                   ],
                 ),
                 child: Padding(
-                  padding: EdgeInsets.only(left: 20.0), // 왼쪽 마진 설정
+                  padding: EdgeInsets.only(left: 20.0),
                   child: Text(
                     "How\nTo\nUse",
                     style: TextStyle(
-                      fontSize: 40.0, // 폰트 크기 설정
-                      color: Colors.white, // 폰트 색상 설정
-                      fontWeight: FontWeight.bold, // 폰트 굵기 설정
-                      fontStyle: FontStyle.italic, // 폰트 스타일 설정
-                      letterSpacing: 2.0, // 글자 간격 설정 (픽셀 단위)
-                      wordSpacing: 5.0, // 단어 간격 설정
-                      decorationColor: Colors.red, // 밑줄 색상 설정
+                      fontSize: 40.0,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                      letterSpacing: 2.0,
+                      wordSpacing: 5.0,
+                      decorationColor: Colors.red,
                     ),
                   ),
                 ),
@@ -190,7 +250,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-
-

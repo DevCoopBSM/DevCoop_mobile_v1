@@ -31,6 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   url_launcher: ^6.0.6 # 버전은 패키지의 최신 버전에 맞게 설정하세요.
+  http: ^0.13.3 # Use the latest version of the http package
 
 
   # The following adds the Cupertino Icons font to your application.
