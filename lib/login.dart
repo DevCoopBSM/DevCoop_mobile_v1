@@ -1,30 +1,31 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'main.dart';
-import 'package:aripay/login.dart';
 import 'package:aripay/main.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(LoginApp());
 }
 
-class MyApp extends StatelessWidget {
+class LoginApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Login(),
+      home: LoginPage(initialLoggedInState: false), // 초기에 로그인되지 않은 상태로 설정
     );
   }
 }
 
-class Login extends StatefulWidget {
+class LoginPage extends StatefulWidget {
+  bool initialLoggedInState; // initialLoggedInState 속성을 추가
+
+  LoginPage({Key? key, required this.initialLoggedInState}) : super(key: key);
+
   @override
-  _LoginState createState() => _LoginState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginState extends State<Login> {
-  bool isLoggedIn = false;
+class _LoginPageState extends State<LoginPage> {
   final String apiUrl = 'http://10.129.57.5:6002/api/login';
 
   final TextEditingController userEmailController = TextEditingController();
@@ -32,7 +33,7 @@ class _LoginState extends State<Login> {
 
   String responseText = "";
 
-  Future<void> _postData(BuildContext context) async {
+  Future<void> _login(BuildContext context) async {
     String userEmail = userEmailController.text;
     String password = passwordController.text;
 
@@ -54,11 +55,16 @@ class _LoginState extends State<Login> {
       if (response.statusCode == 200) {
         setState(() {
           responseText = "로그인 성공: ${response.body}";
-          setState(() {
-            !isLoggedIn;
-          });
-          Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
+          widget.initialLoggedInState = true;
         });
+
+        // 로그인 성공 시에는 Navigator를 사용하여 다음 화면으로 이동
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MyApp(initialLoggedInState: widget.initialLoggedInState),
+          ),
+        );
       } else {
         setState(() {
           responseText = "로그인 실패: ${response.statusCode}";
@@ -73,23 +79,20 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Column(
+    return Scaffold(
+      body: Center(
+        child: Column(
           children: <Widget>[
             Container(
-              margin: EdgeInsets.all(120),
+              margin: EdgeInsets.all(80),
             ),
             Container(
-              margin: EdgeInsets.all(5),
+              margin: EdgeInsets.all(30),
               child: Image.asset(
                 "assets/AriPayL.png",
                 fit: BoxFit.cover,
                 width: 100,
               ),
-            ),
-            Container(
-              margin: EdgeInsets.all(10),
             ),
             SizedBox(
               width: 300,
@@ -109,6 +112,7 @@ class _LoginState extends State<Login> {
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderSide: BorderSide(),
                   ),
                 ),
               ),
@@ -135,6 +139,7 @@ class _LoginState extends State<Login> {
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderSide: BorderSide(),
                   ),
                 ),
               ),
@@ -144,7 +149,7 @@ class _LoginState extends State<Login> {
             ),
             ElevatedButton(
               onPressed: () {
-                _postData(context);
+                _login(context);
               },
               child: Text("로그인"),
               style: ElevatedButton.styleFrom(
@@ -164,10 +169,8 @@ class _LoginState extends State<Login> {
             ),
             Container(
               margin: EdgeInsets.all(5),
-            ),
-            Container(
               child: Text(
-                "학교이메일(@bssm.hs.kr)으로만 로그인이 가능합니다",
+                "학교 이메일(@bssm.hs.kr)로만 로그인이 가능합니다",
                 style: TextStyle(
                   color: Colors.red,
                   fontSize: 13,
@@ -175,6 +178,7 @@ class _LoginState extends State<Login> {
               ),
             ),
             Container(
+              margin: EdgeInsets.all(5),
               child: Text(
                 responseText,
                 style: TextStyle(

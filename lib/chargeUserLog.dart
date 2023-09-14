@@ -45,7 +45,7 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
                 if (isLoggedIn) {
                   _handleLogout(); // 로그아웃 함수 호출
                 } else {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginApp()));
                 }
               },
               child: Text(
