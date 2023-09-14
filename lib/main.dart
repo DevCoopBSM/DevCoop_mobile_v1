@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:aripay/login.dart';
 import 'package:aripay/chargeUserLog.dart';
 import 'package:aripay/useUserLog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(
   MaterialApp(
@@ -50,6 +51,18 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  Future<void> _logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // 'accToken' 키에 저장된 값을 삭제합니다.
+    prefs.remove('accToken');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => LoginApp()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -71,12 +84,7 @@ class _MyAppState extends State<MyApp> {
                 isLoggedIn ?
                 setState(() {
                   isLoggedIn = !isLoggedIn; // 로그인 상태를 변경
-                }) : Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => LoginApp()),
-                );
-
+                }) : _logout(context);
               },
               child: Text(
                 isLoggedIn ? "로그아웃" : "로그인", // 로그인 상태에 따라 버튼 텍스트 변경
