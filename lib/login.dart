@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'main.dart';
 import 'package:aripay/login.dart';
+import 'package:aripay/main.dart';
 
 void main() {
   runApp(MyApp());
@@ -36,7 +37,7 @@ class _LoginState extends State<Login> {
     String password = passwordController.text;
 
     Map<String, dynamic> requestData = {
-      'userEmail': userEmail,
+      'email': userEmail,
       'password': password,
     };
     String jsonData = json.encode(requestData);
@@ -56,7 +57,7 @@ class _LoginState extends State<Login> {
           setState(() {
             !isLoggedIn;
           });
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
         });
       } else {
         setState(() {
