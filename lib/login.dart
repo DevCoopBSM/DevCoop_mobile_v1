@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:aripay/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(LoginApp());
@@ -25,6 +26,7 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
+
 class _LoginPageState extends State<LoginPage> {
   final String apiUrl = 'http://10.129.57.5:6002/api/login';
 
@@ -32,6 +34,19 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
 
   String responseText = "";
+  String accToken = '';
+
+  // 액세스 토큰을 저장하는 메서드
+  Future<void> saveAccessToken(String token) async {
+    try {
+      if (accToken != null && accToken is String) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString(accToken, token);
+      }
+    } catch(e) {
+      print(e);
+    }
+  }
 
   Future<void> _login(BuildContext context) async {
     String userEmail = userEmailController.text;
@@ -55,6 +70,12 @@ class _LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         setState(() {
           responseText = "로그인 성공: ${response.body}";
+          final jsonResponse = json.decode(response.body);
+          // JSON에서 액세스 토큰 추출
+          final accessToken = jsonResponse['accToken'];
+
+          // 액세스 토큰을 저장합니다.
+          saveAccessToken(accessToken);
           widget.initialLoggedInState = true;
         });
 
