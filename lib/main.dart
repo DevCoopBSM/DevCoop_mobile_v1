@@ -83,7 +83,7 @@ class _MyAppState extends State<MyApp> {
               onPressed: () {
                 isLoggedIn ?
                 setState(() {
-                  isLoggedIn = !isLoggedIn; // 로그인 상태를 변경
+                  isLoggedIn = !isLoggedIn;// 로그인 상태를 변경
                 }) : _logout(context);
               },
               child: Text(
