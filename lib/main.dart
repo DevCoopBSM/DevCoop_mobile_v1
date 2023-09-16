@@ -216,7 +216,7 @@ class _MyAppState extends State<MyApp> {
                             child: Text(
                               "충전내역 〉",
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
@@ -241,7 +241,7 @@ class _MyAppState extends State<MyApp> {
                           child: Text(
                             "결제내역 〉",
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
