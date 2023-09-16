@@ -28,9 +28,10 @@ class LoginPage extends StatefulWidget {
 
 
 class _LoginPageState extends State<LoginPage> {
-  // final String apiUrl = 'http://10.10.0.11:6002/DevCoop_MySql/api/login';
-  // final String apiUrl = 'http://DevCoop_MySql/api/login';
-  final String apiUrl = 'http://DevCoop_MySql:6002/api/login';
+  // final String apiUrl = 'http://10.10.0.11:6002/DevCoop_Back/api/login';
+  // final String apiUrl = 'http://DevCoop_Back/api/login';
+  // final String apiUrl = 'http://DevCoop_Back:6002/api/login';
+  final String apiUrl = 'http://10.10.0.11:6002/api/login';
   // final String apiUrl = "http://10.129.57.5:6002/api/login";
 
   final TextEditingController userEmailController = TextEditingController();
@@ -67,13 +68,18 @@ class _LoginPageState extends State<LoginPage> {
     String userEmail = userEmailController.text;
     String password = passwordController.text;
 
+    print("login button was clicked");
+
     Map<String, dynamic> requestData = {
       'email': userEmail,
       'password': password,
     };
     String jsonData = json.encode(requestData);
 
+    print(jsonData);
+
     try {
+      print(apiUrl);
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {
@@ -81,15 +87,20 @@ class _LoginPageState extends State<LoginPage> {
         },
         body: jsonData,
       );
+      print(response);
 
       if (response.statusCode == 200) {
+        print("success!");
         setState(() {
           responseText = "로그인 성공: ${response.body}";
           final jsonResponse = json.decode(response.body);
+          print(jsonResponse);
           // JSON에서 액세스 토큰 추출
-          final accessToken = jsonResponse['accToken'];
+          final String accessToken = jsonResponse['accToken'];
+          print(accessToken);
           // JSON에서 사용자 이름 추출
-          final name = jsonResponse['name'];
+          final String name = jsonResponse['name'];
+          print(name);
 
           // 액세스 토큰을 저장합니다.
           saveAccessToken(accessToken);
@@ -110,6 +121,7 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         setState(() {
           responseText = "로그인 실패: ${response.statusCode}";
+          print("failed");
         });
       }
     } catch (e) {
