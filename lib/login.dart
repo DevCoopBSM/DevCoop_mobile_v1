@@ -28,13 +28,17 @@ class LoginPage extends StatefulWidget {
 
 
 class _LoginPageState extends State<LoginPage> {
-  final String apiUrl = 'http://10.129.57.5:6002/api/login';
+  // final String apiUrl = 'http://10.10.0.11:6002/DevCoop_MySql/api/login';
+  // final String apiUrl = 'http://DevCoop_MySql/api/login';
+  final String apiUrl = 'http://DevCoop_MySql:6002/api/login';
+  // final String apiUrl = "http://10.129.57.5:6002/api/login";
 
   final TextEditingController userEmailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   String responseText = "";
   String accToken = '';
+  String clientName = '';
 
   // 액세스 토큰을 저장하는 메서드
   Future<void> saveAccessToken(String token) async {
@@ -42,6 +46,17 @@ class _LoginPageState extends State<LoginPage> {
       if (accToken != null && accToken is String) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString(accToken, token);
+      }
+    } catch(e) {
+      print(e);
+    }
+  }
+
+  Future<void> saveClientName(String name) async {
+    try {
+      if (clientName != null && clientName is String) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString(clientName, name);
       }
     } catch(e) {
       print(e);
@@ -73,9 +88,15 @@ class _LoginPageState extends State<LoginPage> {
           final jsonResponse = json.decode(response.body);
           // JSON에서 액세스 토큰 추출
           final accessToken = jsonResponse['accToken'];
+          // JSON에서 사용자 이름 추출
+          final name = jsonResponse['name'];
 
           // 액세스 토큰을 저장합니다.
           saveAccessToken(accessToken);
+
+          // 사용자 이름을 저장합니다
+          saveClientName(name);
+
           widget.initialLoggedInState = true;
         });
 

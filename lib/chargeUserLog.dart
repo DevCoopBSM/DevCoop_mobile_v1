@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:aripay/login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 void main() => runApp(
   MaterialApp(
@@ -17,7 +19,7 @@ class ChargeUserLog extends StatefulWidget {
 class _ChargeUserLogState extends State<ChargeUserLog> {
   bool isLoggedIn = false;
   String _responseData = '';
-  final apiUrl = 'http://10.129.57.5:6002/api/chargeuserlog';
+  final apiUrl = 'http://10.10.0.11:6002/api/chargeuserlog';
 
   @override
   void initState() {
@@ -26,9 +28,21 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
     fetchData();
   }
 
+  // 사용자 이름 가져오기 예제
+  Future<String?> getClientName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('clientName');
+  }
+
   Future<void> fetchData() async {
+    String? studentName = await getClientName() ?? "";
     try {
-      final response = await http.get(Uri.parse(apiUrl));
+      final response = await http.get(
+        Uri.parse('$apiUrl?clientName=$studentName'), // 쿼리 매개변수를 URL에 추가
+        headers: {
+          'Content-Type': 'application/json', // 필요한 경우 다른 헤더도 추가할 수 있음
+        },
+      );
 
       if (response.statusCode == 200) {
         // API 요청이 성공하면 응답 데이터를 가져옵니다.
