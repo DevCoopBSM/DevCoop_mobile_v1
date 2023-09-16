@@ -39,7 +39,9 @@ class _LoginPageState extends State<LoginPage> {
 
   String responseText = "";
   String accToken = '';
+  String refToken = '';
   String clientName = '';
+  int userPoint = 0;
 
   // 액세스 토큰을 저장하는 메서드
   Future<void> saveAccessToken(String token) async {
@@ -53,12 +55,33 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<void> saveRefreshToken(String token) async {
+    try {
+      if (refToken != null && refToken is String) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString(refToken, token);
+      }
+    } catch(e) {
+      print(e);
+    }
+  }
+
   Future<void> saveClientName(String name) async {
     try {
       if (clientName != null && clientName is String) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString(clientName, name);
       }
+    } catch(e) {
+      print(e);
+    }
+  }
+
+  Future<void> saveUserPoint(int point) async {
+    try {
+      int userPoint = point; // 포인트를 안전하게 int로 파싱
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('userPoint', userPoint); // 포인트를 'userPoint' 키로 저장
     } catch(e) {
       print(e);
     }
@@ -95,18 +118,26 @@ class _LoginPageState extends State<LoginPage> {
           responseText = "로그인 성공: ${response.body}";
           final jsonResponse = json.decode(response.body);
           print(jsonResponse);
-          // JSON에서 액세스 토큰 추출
+          // JSON에서 토큰 추출
           final String accessToken = jsonResponse['accToken'];
+          final String refreshToken = jsonResponse['refToken'];
           print(accessToken);
           // JSON에서 사용자 이름 추출
           final String name = jsonResponse['name'];
           print(name);
 
+          // JSON에서 point 추출
+         int userPoint = jsonResponse['point'];
+
           // 액세스 토큰을 저장합니다.
           saveAccessToken(accessToken);
+          saveRefreshToken(refreshToken);
 
           // 사용자 이름을 저장합니다
           saveClientName(name);
+
+          // 사용자 point를 저장합니다
+          saveUserPoint(userPoint);
 
           widget.initialLoggedInState = true;
         });

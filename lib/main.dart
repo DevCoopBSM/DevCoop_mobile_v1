@@ -5,6 +5,10 @@ import 'package:aripay/chargeUserLog.dart';
 import 'package:aripay/useUserLog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final String accessTokenKey = 'accToken';
+final String refreshTokenKey = 'refToken';
+final String userPointKey = 'userPoint';
+
 void main() => runApp(
   MaterialApp(
     home: MyApp(initialLoggedInState: false),
@@ -14,7 +18,6 @@ void main() => runApp(
 class MyApp extends StatefulWidget {
   final bool initialLoggedInState;
 
-  // initialLoggedInState를 필수 매개변수로 변경
   MyApp({required this.initialLoggedInState});
 
   @override
@@ -23,12 +26,47 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool isLoggedIn = false;
-
+  int? userPoint;
 
   @override
   void initState() {
     super.initState();
     isLoggedIn = widget.initialLoggedInState;
+    loadSavedData();
+  }
+
+  Future<int?> loadUserPoint() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userPoint = prefs.getInt(userPointKey);
+    return userPoint;
+  }
+
+  Future<void> loadSavedData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? accessToken = prefs.getString(accessTokenKey);
+    if (accessToken != null) {
+      print('액세스 토큰: $accessToken');
+    } else {
+      print('저장된 액세스 토큰이 없습니다.');
+    }
+
+    String? refreshToken = prefs.getString(refreshTokenKey);
+    if (refreshToken != null) {
+      print('리프레시 토큰: $refreshToken');
+    } else {
+      print('저장된 리프레시 토큰이 없습니다.');
+    }
+
+    int? userPoint = await loadUserPoint();
+    if (userPoint != null) {
+      setState(() {
+        this.userPoint = userPoint;
+      });
+      print('사용자 포인트: $userPoint');
+    } else {
+      print('저장된 사용자 포인트가 없습니다.');
+    }
   }
 
   void _launchNotion() async {
@@ -54,12 +92,10 @@ class _MyAppState extends State<MyApp> {
   Future<void> _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // 'accToken' 키에 저장된 값을 삭제합니다.
-    prefs.remove('accToken');
+    prefs.remove(accessTokenKey); // 수정: 'accToken' 대신 변수 사용
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => LoginApp()),
+      MaterialPageRoute(builder: (context) => LoginApp()),
     );
   }
 
@@ -81,10 +117,11 @@ class _MyAppState extends State<MyApp> {
           actions: [
             TextButton(
               onPressed: () {
-                isLoggedIn ?
-                setState(() {
-                  isLoggedIn = !isLoggedIn;// 로그인 상태를 변경
-                }) : _logout(context);
+                isLoggedIn
+                    ? setState(() {
+                  isLoggedIn = !isLoggedIn; // 로그인 상태를 변경
+                })
+                    : _logout(context);
               },
               child: Text(
                 isLoggedIn ? "로그아웃" : "로그인", // 로그인 상태에 따라 버튼 텍스트 변경
@@ -93,8 +130,6 @@ class _MyAppState extends State<MyApp> {
                 ),
               ),
             ),
-
-
           ],
         ),
         body: Column(
@@ -133,12 +168,14 @@ class _MyAppState extends State<MyApp> {
                   ),
                   Container(
                     margin: isLoggedIn
-                        ? EdgeInsets.only(left: 10, right: 130, top: 30)
-                        : EdgeInsets.only(left: 10, right: 35, top: 30),
+                        ? EdgeInsets.only(left: 30, right: 250, top: 30)
+                        : EdgeInsets.only(left: 10, right: 60, top: 30),
                     child: Text(
-                      isLoggedIn ? "남은금액 : " : "로그인을 해주세요",
+                      isLoggedIn
+                          ? "${userPoint ?? null}원"
+                          : "로그인을 해주세요",
                       style: TextStyle(
-                        fontSize: 35,
+                        fontSize: 30,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
