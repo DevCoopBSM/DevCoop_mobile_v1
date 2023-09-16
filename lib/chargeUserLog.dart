@@ -223,6 +223,7 @@ class ContainerList extends StatelessWidget {
       // responseData에서 데이터를 파싱하여 리스트에 추가
       final List<dynamic> data = json.decode(responseData);
       for (var item in data) {
+        // 이제 item 변수가 반복문 내에서 정의됩니다.
         String date = item['date'];
         String innerPoint = item['innerPoint'].toString();
         String type = item['type'].toString();
@@ -249,7 +250,7 @@ class ContainerList extends StatelessWidget {
           height: 70,
           margin: EdgeInsets.all(10),
           alignment: Alignment.center,
-          child: Text('데이터를 불러올 수 없습니다.'),
+          child: Text('데이터 오류'),
           decoration: BoxDecoration(
             color: Color.fromRGBO(230, 235, 255, 1.0),
             borderRadius: BorderRadius.circular(10),
