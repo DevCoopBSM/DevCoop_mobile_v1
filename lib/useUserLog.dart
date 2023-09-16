@@ -1,27 +1,105 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:aripay/login.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(
-  MaterialApp(
-    home: UseUserLog(),
-  ),
-);
+final String userPointKey = 'userPoint';
+final String accessTokenKey = 'accToken';
+final String refreshTokenKey = 'refToken';
 
 class UseUserLog extends StatefulWidget {
+  final bool isLoggedIn; // 부모에서 전달된 isLoggedIn 상태
+  final Function(bool) updateLoginStatus; // 부모에서 전달된 상태 업데이트 함수
+
+  UseUserLog({required this.isLoggedIn, required this.updateLoginStatus}); // 생성자를 통해 값 전달
   @override
   _UseUserLogState createState() => _UseUserLogState();
 }
 
 class _UseUserLogState extends State<UseUserLog> {
-  bool isLoggedIn = false;
+  String _responseData = '';
+  final apiUrl = 'http://10.10.0.11:6002/api/useuserlog';
+  int? userPoint;
+
+  @override
+  void initState() {
+    super.initState();
+    // 앱이 시작될 때 데이터를 가져오도록 initState에서 fetchData 호출
+    fetchData();
+    loadSavedData(); // 사용자 포인트 데이터를 불러오도록 추가
+  }
+
+  Future<int?> loadUserPoint() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userPoint = prefs.getInt(userPointKey);
+    return userPoint;
+  }
+
+  Future<void> loadSavedData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userPoint = await loadUserPoint();
+    if (userPoint != null) {
+      setState(() {
+        this.userPoint = userPoint;
+      });
+      print('사용자 포인트: $userPoint');
+    } else {
+      print('저장된 사용자 포인트가 없습니다.');
+    }
+  }
+
+  // 사용자 이름 가져오기 예제
+  Future<String?> getClientName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('clientName');
+  }
+
+  Future<void> fetchData() async {
+    String? studentName = await getClientName() ?? "";
+    try {
+      final response = await http.get(
+        Uri.parse('$apiUrl?clientName=$studentName'), // 쿼리 매개변수를 URL에 추가
+        headers: {
+          'Content-Type': 'application/json', // 필요한 경우 다른 헤더도 추가할 수 있음
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // API 요청이 성공하면 응답 데이터를 가져옵니다.
+        final data = json.decode(response.body);
+        setState(() {
+          _responseData = json.encode(data); // JSON 데이터를 다시 문자열로 변환
+        });
+      } else {
+        // API 요청이 실패한 경우 오류 메시지를 표시합니다.
+        setState(() {
+          _responseData = 'API 요청 실패: ${response.statusCode}';
+        });
+      }
+    } catch (e) {
+      // 네트워크 오류 등 예외 처리
+      setState(() {
+        _responseData = '데이터를 가져올 수 없습니다.';
+      });
+    }
+  }
 
   // 로그아웃 처리 함수
-  void _handleLogout() {
-    // 여기에서 로그아웃 로직을 구현하세요.
-    // 사용자 로그아웃 상태로 변경
-    setState(() {
-      !isLoggedIn;
-    });
+  Future<void> _handleLogout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.remove(accessTokenKey); // 수정: 'accToken' 대신 변수 사용
+    print("removed accToken");
+
+    widget.updateLoginStatus(false); // 로그아웃 상태를 상위 위젯으로 전달
+
+    Navigator.pushReplacement( // 로그인 화면으로 이동
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginApp(),
+      ),
+    );
   }
 
   @override
@@ -42,14 +120,19 @@ class _UseUserLogState extends State<UseUserLog> {
           actions: [
             TextButton(
               onPressed: () {
-                if (isLoggedIn) {
-                  _handleLogout(); // 로그아웃 함수 호출
+                if (widget.isLoggedIn) {
+                  _handleLogout(context); // 로그아웃 함수 호출
                 } else {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginApp()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginApp(),
+                    ),
+                  );
                 }
               },
               child: Text(
-                isLoggedIn ? "로그아웃" : "로그인",
+                widget.isLoggedIn ? "로그아웃" : "로그인",
                 style: TextStyle(
                   color: Colors.black,
                 ),
@@ -57,10 +140,10 @@ class _UseUserLogState extends State<UseUserLog> {
             ),
           ],
         ),
-        body: ListView( // ListView로 변경
+        body: ListView(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween, // 텍스트를 좌우로 배치
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
                   margin: EdgeInsets.only(top: 30, left: 15),
@@ -69,14 +152,15 @@ class _UseUserLogState extends State<UseUserLog> {
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
-                        color: Colors.black45
-                    ),
+                        color: Colors.black45),
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 30, right: 15),
                   child: Text(
-                    "9000" + "원",
+                    "${
+                        widget.isLoggedIn ? userPoint : ""
+                    } 원",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -89,11 +173,11 @@ class _UseUserLogState extends State<UseUserLog> {
               margin: EdgeInsets.all(10),
             ),
             Divider(
-              color: Colors.black12,  // 줄의 색상 설정
-              thickness: 2.0, // 줄의 두께 설정
+              color: Colors.black12,
+              thickness: 2.0,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween, // 텍스트를 좌우로 배치
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
                   margin: EdgeInsets.only(left: 15),
@@ -102,8 +186,7 @@ class _UseUserLogState extends State<UseUserLog> {
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
-                        color: Colors.black
-                    ),
+                        color: Colors.black),
                   ),
                 ),
                 Container(
@@ -118,7 +201,7 @@ class _UseUserLogState extends State<UseUserLog> {
             Container(
               margin: EdgeInsets.all(10),
             ),
-            ContainerList(),
+            ContainerList(responseData: _responseData),
           ],
         ),
       ),
@@ -127,23 +210,49 @@ class _UseUserLogState extends State<UseUserLog> {
 }
 
 class ContainerList extends StatelessWidget {
+  final String responseData;
+
+  ContainerList({required this.responseData});
+
   @override
   Widget build(BuildContext context) {
     // Container 위젯들을 저장할 리스트
     List<Container> containers = [];
 
-    // 10개의 파란색 Container를 생성하여 리스트에 추가
-    for (int i = 0; i < 10; i++) {
+    try {
+      // responseData에서 데이터를 파싱하여 리스트에 추가
+      final List<dynamic> data = json.decode(responseData);
+      for (var item in data) {
+        String date = item['date'];
+        String innerPoint = item['innerPoint'].toString();
+        String type = item['type'].toString();
+
+        containers.add(
+          Container(
+            width: 900,
+            height: 70,
+            margin: EdgeInsets.all(10),
+            alignment: Alignment.center,
+            child: Text('$date $innerPoint $type'),
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(230, 235, 255, 1.0),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      // 데이터 파싱 오류 처리
       containers.add(
         Container(
           width: 900,
-          height: 70, // 높이를 조정
+          height: 70,
           margin: EdgeInsets.all(10),
           alignment: Alignment.center,
-          child: Text('Container $i', style: TextStyle(color: Colors.black)),
+          child: Text('데이터를 불러올 수 없습니다.'),
           decoration: BoxDecoration(
-            color: Color(0xFFE7E7E7),
-            borderRadius: BorderRadius.circular(10), // BorderRadius 수정
+            color: Color.fromRGBO(231, 231, 231, 1.0),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
       );

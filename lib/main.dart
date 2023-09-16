@@ -35,6 +35,13 @@ class _MyAppState extends State<MyApp> {
     loadSavedData();
   }
 
+  // 사용자 로그인 또는 로그아웃 상태를 업데이트하는 함수
+  void updateLoginStatus(bool status) {
+    setState(() {
+      isLoggedIn = status;
+    });
+  }
+
   Future<int?> loadUserPoint() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userPoint = prefs.getInt(userPointKey);
@@ -93,10 +100,11 @@ class _MyAppState extends State<MyApp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.remove(accessTokenKey); // 수정: 'accToken' 대신 변수 사용
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => LoginApp()),
-    );
+    print("removed accToken");
+
+    setState(() {
+      isLoggedIn = !isLoggedIn; // 로그인 상태를 변경
+    });
   }
 
   @override
@@ -117,11 +125,11 @@ class _MyAppState extends State<MyApp> {
           actions: [
             TextButton(
               onPressed: () {
-                isLoggedIn
-                    ? setState(() {
-                  isLoggedIn = !isLoggedIn; // 로그인 상태를 변경
-                })
-                    : _logout(context);
+                isLoggedIn ? _logout(context) :
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginApp()),
+                );;
               },
               child: Text(
                 isLoggedIn ? "로그아웃" : "로그인", // 로그인 상태에 따라 버튼 텍스트 변경
@@ -158,7 +166,7 @@ class _MyAppState extends State<MyApp> {
                   Container(
                     margin: EdgeInsets.only(left: 10, right: 140, top: 40),
                     child: Text(
-                      "현재 사용가능한 금액 〉",
+                      "현재 사용가능한 금액",
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -198,7 +206,11 @@ class _MyAppState extends State<MyApp> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ChargeUserLog()),
+                                  builder: (context) => ChargeUserLog(
+                                    isLoggedIn: isLoggedIn, // isLoggedIn 전달
+                                    updateLoginStatus: updateLoginStatus, // updateLoginStatus 전달
+                                  ),
+                                ),
                               );
                             },
                             child: Text(
@@ -219,7 +231,11 @@ class _MyAppState extends State<MyApp> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => UseUserLog()),
+                                builder: (context) => UseUserLog(
+                                  isLoggedIn: isLoggedIn, // isLoggedIn 전달
+                                  updateLoginStatus: updateLoginStatus, // updateLoginStatus 전달
+                                ),
+                              ),
                             );
                           },
                           child: Text(

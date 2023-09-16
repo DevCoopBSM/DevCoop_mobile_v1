@@ -1,31 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:aripay/login.dart';
 import 'package:http/http.dart' as http;
+import 'package:aripay/login.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-void main() => runApp(
-  MaterialApp(
-    home: ChargeUserLog(),
-  ),
-);
+final String userPointKey = 'userPoint';
+final String accessTokenKey = 'accToken';
+final String refreshTokenKey = 'refToken';
 
 class ChargeUserLog extends StatefulWidget {
+  final bool isLoggedIn; // 부모에서 전달된 isLoggedIn 상태
+  final Function(bool) updateLoginStatus; // 부모에서 전달된 상태 업데이트 함수
+
+  ChargeUserLog({required this.isLoggedIn, required this.updateLoginStatus}); // 생성자를 통해 값 전달
   @override
   _ChargeUserLogState createState() => _ChargeUserLogState();
 }
 
 class _ChargeUserLogState extends State<ChargeUserLog> {
-  bool isLoggedIn = false;
   String _responseData = '';
   final apiUrl = 'http://10.10.0.11:6002/api/chargeuserlog';
+  int? userPoint;
 
   @override
   void initState() {
     super.initState();
     // 앱이 시작될 때 데이터를 가져오도록 initState에서 fetchData 호출
     fetchData();
+    loadSavedData(); // 사용자 포인트 데이터를 불러오도록 추가
+  }
+
+  Future<int?> loadUserPoint() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userPoint = prefs.getInt(userPointKey);
+    return userPoint;
+  }
+
+  Future<void> loadSavedData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userPoint = await loadUserPoint();
+    if (userPoint != null) {
+      setState(() {
+        this.userPoint = userPoint;
+      });
+      print('사용자 포인트: $userPoint');
+    } else {
+      print('저장된 사용자 포인트가 없습니다.');
+    }
   }
 
   // 사용자 이름 가져오기 예제
@@ -65,12 +86,20 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
   }
 
   // 로그아웃 처리 함수
-  void _handleLogout() {
-    // 여기에서 로그아웃 로직을 구현하세요.
-    // 사용자 로그아웃 상태로 변경
-    setState(() {
-      isLoggedIn = false; // 상태를 변경하도록 수정
-    });
+  Future<void> _handleLogout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.remove(accessTokenKey); // 수정: 'accToken' 대신 변수 사용
+    print("removed accToken");
+
+    widget.updateLoginStatus(false); // 로그아웃 상태를 상위 위젯으로 전달
+
+    Navigator.pushReplacement( // 로그인 화면으로 이동
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginApp(),
+      ),
+    );
   }
 
   @override
@@ -91,17 +120,19 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
           actions: [
             TextButton(
               onPressed: () {
-                if (isLoggedIn) {
-                  _handleLogout(); // 로그아웃 함수 호출
+                if (widget.isLoggedIn) {
+                  _handleLogout(context); // 로그아웃 함수 호출
                 } else {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => LoginApp()));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginApp(),
+                    ),
+                  );
                 }
               },
               child: Text(
-                isLoggedIn ? "로그아웃" : "로그인",
+                widget.isLoggedIn ? "로그아웃" : "로그인",
                 style: TextStyle(
                   color: Colors.black,
                 ),
@@ -127,7 +158,9 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
                 Container(
                   margin: EdgeInsets.only(top: 30, right: 15),
                   child: Text(
-                    "9000" + "원",
+                    "${
+                        widget.isLoggedIn ? userPoint : ""
+                    } 원",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
