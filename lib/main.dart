@@ -164,7 +164,7 @@ class _MyAppState extends State<MyApp> {
               child: Column(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(left: 10, right: 140, top: 40),
+                    margin: EdgeInsets.only(left: 10, right: 155, top: 40),
                     child: Text(
                       "현재 사용가능한 금액",
                       style: TextStyle(
@@ -176,14 +176,15 @@ class _MyAppState extends State<MyApp> {
                   ),
                   Container(
                     margin: isLoggedIn
-                        ? EdgeInsets.only(left: 30, right: 250, top: 30)
-                        : EdgeInsets.only(left: 10, right: 60, top: 30),
+                        ? EdgeInsets.only(left: 30, right: 220, top: 30)
+                        : EdgeInsets.only(left: 10, right: 85, top: 30),
+                    width: 200,
                     child: Text(
                       isLoggedIn
                           ? "${userPoint ?? null}원"
                           : "로그인을 해주세요",
                       style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 26,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
