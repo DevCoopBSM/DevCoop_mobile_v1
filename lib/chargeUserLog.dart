@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:aripay/login.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:aripay/main.dart';
 
 final String userPointKey = 'userPoint';
 final String accessTokenKey = 'accToken';
@@ -18,9 +19,10 @@ class ChargeUserLog extends StatefulWidget {
 }
 
 class _ChargeUserLogState extends State<ChargeUserLog> {
-  String _responseData = '';
-  final apiUrl = 'http://10.10.0.11:6002/api/chargeuserlog';
-  int? userPoint;
+  String _responseData = ''; // 서버 응답 데이터를 저장할 변수
+  // final apiUrl = 'http://10.10.0.11:6002/api/chargeuserlog'; // API 엔드포인트 URL
+  final apiUrl = 'http://10.129.57.5:6002/api/chargeuserlog'; // API 엔드포인트 URL
+  int? userPoint; // 사용자 포인트 정보를 저장할 변수
 
   @override
   void initState() {
@@ -30,12 +32,14 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
     loadSavedData(); // 사용자 포인트 데이터를 불러오도록 추가
   }
 
+  // SharedPreferences에서 사용자 포인트를 불러오는 함수
   Future<int?> loadUserPoint() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userPoint = prefs.getInt(userPointKey);
     return userPoint;
   }
 
+  // 저장된 사용자 데이터를 불러와서 화면에 업데이트하는 함수
   Future<void> loadSavedData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userPoint = await loadUserPoint();
@@ -49,55 +53,61 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
     }
   }
 
-  // 사용자 이름 가져오기 예제
+  // 사용자 이름을 SharedPreferences에서 가져오는 함수
   Future<String?> getClientName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('clientName');
   }
 
+  // 서버에서 데이터를 가져오는 함수
   Future<void> fetchData() async {
     String? studentName = await getClientName() ?? "";
     try {
       final response = await http.get(
-        Uri.parse('$apiUrl?clientName=$studentName'), // 쿼리 매개변수를 URL에 추가
+        Uri.parse('$apiUrl?clientname=$studentName'),
         headers: {
-          'Content-Type': 'application/json', // 필요한 경우 다른 헤더도 추가할 수 있음
+          'Content-Type': 'application/json',
         },
       );
+      print(response);
 
       if (response.statusCode == 200) {
-        // API 요청이 성공하면 응답 데이터를 가져옵니다.
-        final data = json.decode(response.body);
-        setState(() {
-          _responseData = json.encode(data); // JSON 데이터를 다시 문자열로 변환
-        });
+        // 응답이 유효한 JSON인지 확인
+        if (response.body.isNotEmpty) {
+          final data = json.decode(response.body);
+          setState(() {
+            _responseData = json.encode(data);
+          });
+        } else {
+          setState(() {
+            _responseData = '서버로부터 데이터를 받지 못했습니다.';
+          });
+        }
       } else {
-        // API 요청이 실패한 경우 오류 메시지를 표시합니다.
         setState(() {
           _responseData = 'API 요청 실패: ${response.statusCode}';
         });
       }
     } catch (e) {
-      // 네트워크 오류 등 예외 처리
       setState(() {
-        _responseData = '데이터를 가져올 수 없습니다.';
+        _responseData = '데이터를 가져올 수 없습니다: $e';
       });
     }
   }
 
   // 로그아웃 처리 함수
-  Future<void> _handleLogout(BuildContext context) async {
+  Future<void> _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.remove(accessTokenKey); // 수정: 'accToken' 대신 변수 사용
-    print("removed accToken");
+    print("accToken 제거됨");
 
     widget.updateLoginStatus(false); // 로그아웃 상태를 상위 위젯으로 전달
 
-    Navigator.pushReplacement( // 로그인 화면으로 이동
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => LoginApp(),
+        builder: (context) => MyApp(initialLoggedInState: false),
       ),
     );
   }
@@ -120,16 +130,12 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
           actions: [
             TextButton(
               onPressed: () {
-                if (widget.isLoggedIn) {
-                  _handleLogout(context); // 로그아웃 함수 호출
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginApp(),
-                    ),
-                  );
-                }
+                print(widget.isLoggedIn);
+                widget.isLoggedIn ? _logout(context) :
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginApp()),
+                );
               },
               child: Text(
                 widget.isLoggedIn ? "로그아웃" : "로그인",
@@ -158,9 +164,7 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
                 Container(
                   margin: EdgeInsets.only(top: 30, right: 15),
                   child: Text(
-                    "${
-                        widget.isLoggedIn ? userPoint : ""
-                    } 원",
+                    "${widget.isLoggedIn ? userPoint : ""} 원",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -201,7 +205,9 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
             Container(
               margin: EdgeInsets.all(10),
             ),
-            ContainerList(responseData: _responseData),
+            ContainerList(
+                responseData: _responseData
+            ),
           ],
         ),
       ),
@@ -212,57 +218,35 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
 class ContainerList extends StatelessWidget {
   final String responseData;
 
-  ContainerList({required this.responseData});
+  ContainerList({
+    required this.responseData,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Container 위젯들을 저장할 리스트
-    List<Container> containers = [];
+    // responseData에서 데이터를 파싱하여 리스트에 추가
+    final List<dynamic> data = json.decode(responseData);
 
-    try {
-      // responseData에서 데이터를 파싱하여 리스트에 추가
-      final List<dynamic> data = json.decode(responseData);
-      for (var item in data) {
-        // 이제 item 변수가 반복문 내에서 정의됩니다.
+    return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (BuildContext context, int index) {
+        final item = data[index];
         String date = item['date'];
-        String innerPoint = item['innerPoint'].toString();
+        String innerPoint = item['inner_point'].toString();
         String type = item['type'].toString();
 
-        containers.add(
-          Container(
-            width: 900,
-            height: 70,
-            margin: EdgeInsets.all(10),
-            alignment: Alignment.center,
-            child: Text('$date $innerPoint $type'),
-            decoration: BoxDecoration(
-              color: Color.fromRGBO(230, 235, 255, 1.0),
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      // 데이터 파싱 오류 처리
-      containers.add(
-        Container(
+        return Container(
           width: 900,
           height: 70,
           margin: EdgeInsets.all(10),
           alignment: Alignment.center,
-          child: Text('데이터 오류'),
+          child: Text('$date $innerPoint $type'),
           decoration: BoxDecoration(
             color: Color.fromRGBO(230, 235, 255, 1.0),
             borderRadius: BorderRadius.circular(10),
           ),
-        ),
-      );
-    }
-
-    // 리스트의 모든 Container를 Column에 출력
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: containers,
+        );
+      },
     );
   }
 }

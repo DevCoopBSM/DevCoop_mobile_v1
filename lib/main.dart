@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginApp()),
-                );;
+                );
               },
               child: Text(
                 isLoggedIn ? "로그아웃" : "로그인", // 로그인 상태에 따라 버튼 텍스트 변경

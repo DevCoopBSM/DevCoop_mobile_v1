@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:aripay/login.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:aripay/main.dart';
 
 final String userPointKey = 'userPoint';
 final String accessTokenKey = 'accToken';
@@ -94,10 +95,10 @@ class _UseUserLogState extends State<UseUserLog> {
 
     widget.updateLoginStatus(false); // 로그아웃 상태를 상위 위젯으로 전달
 
-    Navigator.pushReplacement( // 로그인 화면으로 이동
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => LoginApp(),
+        builder: (context) => MyApp(initialLoggedInState: false),
       ),
     );
   }
