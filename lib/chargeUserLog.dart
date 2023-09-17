@@ -9,6 +9,16 @@ final String userPointKey = 'userPoint';
 final String accessTokenKey = 'accToken';
 final String refreshTokenKey = 'refToken';
 
+void main() {
+  bool isLoggedIn = true; // 여기에 로그인 상태를 나타내는 값을 할당합니다.
+  runApp(ChargeUserLog(
+    isLoggedIn: isLoggedIn,
+    updateLoginStatus: (bool status) {
+      isLoggedIn = status;
+    },
+  ));
+}
+
 class ChargeUserLog extends StatefulWidget {
   final bool isLoggedIn; // 부모에서 전달된 isLoggedIn 상태
   final Function(bool) updateLoginStatus; // 부모에서 전달된 상태 업데이트 함수

@@ -47,7 +47,7 @@ class NotFound extends StatelessWidget {
               onPressed: () {
                 // 여기에 로그인 페이지로 이동하는 코드를 추가하세요.
                 // 예를 들어, Navigator를 사용하여 새로운 화면으로 이동할 수 있습니다.
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp(initialLoggedInState: true)));
               },
               style: ElevatedButton.styleFrom(
                 primary: Color.fromRGBO(252, 200, 0, 1.0), // 버튼 배경색
