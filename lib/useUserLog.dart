@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:aripay/login.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:aripay/main.dart';
+import 'package:aripay/login.dart';
 
 final String userPointKey = 'userPoint';
 final String accessTokenKey = 'accToken';
 final String refreshTokenKey = 'refToken';
 
 void main() {
-  bool isLoggedIn = true; // 여기에 로그인 상태를 나타내는 값을 할당합니다.
+  bool isLoggedIn = true;
   runApp(UseUserLog(
     isLoggedIn: isLoggedIn,
     updateLoginStatus: (bool status) {
@@ -20,82 +20,70 @@ void main() {
 }
 
 class UseUserLog extends StatefulWidget {
-  final bool isLoggedIn; // 부모에서 전달된 isLoggedIn 상태
-  final Function(bool) updateLoginStatus; // 부모에서 전달된 상태 업데이트 함수
+  final bool isLoggedIn;
+  final Function(bool) updateLoginStatus;
 
-  UseUserLog({required this.isLoggedIn, required this.updateLoginStatus}); // 생성자를 통해 값 전달
+  UseUserLog({required this.isLoggedIn, required this.updateLoginStatus});
+
   @override
   _UseUserLogState createState() => _UseUserLogState();
 }
 
 class _UseUserLogState extends State<UseUserLog> {
   String _responseData = ''; // 서버 응답 데이터를 저장할 변수
-  // final apiUrl = 'http://10.10.0.11:6002/api/chargeuserlog'; // API 엔드포인트 URL
-  final apiUrl = 'http://10.129.57.5:6002/api/useuserlog'; // API 엔드포인트 URL
-  int? userPoint; // 사용자 포인트 정보를 저장할 변수
+  final apiUrl = 'http://10.129.57.5/api/payuserlog';
+  int? userPoint;
 
   @override
   void initState() {
     super.initState();
-    // 앱이 시작될 때 데이터를 가져오도록 initState에서 fetchData 호출
     fetchData();
-    loadSavedData(); // 사용자 포인트 데이터를 불러오도록 추가
+    loadSavedData();
   }
 
-  // SharedPreferences에서 사용자 포인트를 불러오는 함수
   Future<int?> loadUserPoint() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userPoint = prefs.getInt(userPointKey);
-    return userPoint;
+    return userPoint ?? 0; // 기본값으로 0을 반환하도록 수정
   }
 
-  // 저장된 사용자 데이터를 불러와서 화면에 업데이트하는 함수
   Future<void> loadSavedData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userPoint = await loadUserPoint();
-    if (userPoint != null) {
-      setState(() {
-        this.userPoint = userPoint;
-      });
-      print('사용자 포인트: $userPoint');
-    } else {
-      print('저장된 사용자 포인트가 없습니다.');
-    }
+    setState(() {
+      this.userPoint = userPoint;
+    });
+    print('사용자 포인트: $userPoint');
   }
 
-  // 사용자 이름을 SharedPreferences에서 가져오는 함수
   Future<String?> getClientName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('clientName');
+    String? p = prefs.getString('clientName');
+    print("사용자 이름 : $p");
+    return p ?? ""; // 기본값으로 빈 문자열 반환
   }
 
-  // 서버에서 데이터를 가져오는 함수
   Future<void> fetchData() async {
-    String? studentName = await getClientName() ?? "";
+    print("check");
+    String? clientName = await getClientName();
     try {
-      final response = await http.get(
-        Uri.parse('$apiUrl?clientname=$studentName'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      );
-      print(response);
+      final response = await http.get(Uri.parse('$apiUrl?clientname=$clientName')); // 클라이언트 이름을 요청에 포함
+      print("response.body : ${response.body}");
 
       if (response.statusCode == 200) {
-        // 응답이 유효한 JSON인지 확인
-        if (response.body.isNotEmpty) {
-          final data = json.decode(response.body);
+        final responseData = response.body;
+        if (responseData.isNotEmpty) {
           setState(() {
-            _responseData = json.encode(data);
+            _responseData = responseData; // 정상적인 JSON 문자열로 설정
           });
         } else {
           setState(() {
-            _responseData = '서버로부터 데이터를 받지 못했습니다.';
+            _responseData = '서버 응답이 비어있습니다.';
           });
         }
       } else {
         setState(() {
-          _responseData = 'API 요청 실패: ${response.statusCode}';
+          _responseData = '서버 응답이 실패했습니다: ${response.statusCode}';
         });
       }
     } catch (e) {
@@ -105,14 +93,12 @@ class _UseUserLogState extends State<UseUserLog> {
     }
   }
 
-  // 로그아웃 처리 함수
   Future<void> _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    prefs.remove(accessTokenKey); // 수정: 'accToken' 대신 변수 사용
+    prefs.remove(accessTokenKey);
     print("accToken 제거됨");
 
-    widget.updateLoginStatus(false); // 로그아웃 상태를 상위 위젯으로 전달
+    widget.updateLoginStatus(false);
 
     Navigator.pushReplacement(
       context,
@@ -141,8 +127,9 @@ class _UseUserLogState extends State<UseUserLog> {
             TextButton(
               onPressed: () {
                 print(widget.isLoggedIn);
-                widget.isLoggedIn ? _logout(context) :
-                Navigator.push(
+                widget.isLoggedIn
+                    ? _logout(context)
+                    : Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginApp()),
                 );
@@ -156,69 +143,71 @@ class _UseUserLogState extends State<UseUserLog> {
             ),
           ],
         ),
-        body: ListView(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: 30, left: 15),
-                  child: Text(
-                    "남은 금액",
-                    style: TextStyle(
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 30, left: 15),
+                    child: Text(
+                      "남은 금액",
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
-                        color: Colors.black45),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 30, right: 15),
-                  child: Text(
-                    "${widget.isLoggedIn ? userPoint : ""} 원",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                        color: Colors.black45,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            Container(
-              margin: EdgeInsets.all(10),
-            ),
-            Divider(
-              color: Colors.black12,
-              thickness: 2.0,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: 15),
-                  child: Text(
-                    "사용내역",
-                    style: TextStyle(
+                  Container(
+                    margin: EdgeInsets.only(top: 30, right: 15),
+                    child: Text(
+                      "${widget.isLoggedIn ? userPoint ?? "" : ""} 원",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                margin: EdgeInsets.all(10),
+              ),
+              Divider(
+                color: Colors.black12,
+                thickness: 2.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 15),
+                    child: Text(
+                      "사용내역",
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
-                        color: Colors.black),
+                        color: Colors.black,
+                      ),
+                    ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(right: 15),
-                  child: Image.asset(
-                    "assets/filter.png",
-                    height: 20,
+                  Container(
+                    margin: EdgeInsets.only(right: 15),
+                    child: Image.asset(
+                      "assets/filter.png",
+                      height: 20,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Container(
-              margin: EdgeInsets.all(10),
-            ),
-            ContainerList(
-                responseData: _responseData
-            ),
-          ],
+                ],
+              ),
+              Container(
+                margin: EdgeInsets.all(10),
+              ),
+              ContainerList(responseData: _responseData),
+            ],
+          ),
         ),
       ),
     );
@@ -234,11 +223,12 @@ class ContainerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // responseData에서 데이터를 파싱하여 리스트에 추가
     final List<dynamic> data = json.decode(responseData);
 
     return ListView.builder(
-      itemCount: data.length,
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: data.length, // 데이터의 개수로 itemCount를 설정
       itemBuilder: (BuildContext context, int index) {
         final item = data[index];
         String date = item['date'];
@@ -250,9 +240,9 @@ class ContainerList extends StatelessWidget {
           height: 70,
           margin: EdgeInsets.all(10),
           alignment: Alignment.center,
-          child: Text('$date $innerPoint $type'),
+          child: Text('$date        $innerPoint원       결제'),
           decoration: BoxDecoration(
-            color: Color.fromRGBO(230, 235, 255, 1.0),
+            color: Color(0xFFE7E7E7),
             borderRadius: BorderRadius.circular(10),
           ),
         );

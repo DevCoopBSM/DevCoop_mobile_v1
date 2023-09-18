@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       if (clientName != null && clientName is String) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString(clientName, name);
+        await prefs.setString('clientName', name);
       }
     } catch(e) {
       print(e);
