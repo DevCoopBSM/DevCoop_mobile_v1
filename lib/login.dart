@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:aripay/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cookie_jar/cookie_jar.dart';
+import 'dart:io';
 
 void main() {
   runApp(LoginApp());
@@ -12,13 +14,13 @@ class LoginApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoginPage(initialLoggedInState: false), // 초기에 로그인되지 않은 상태로 설정
+      home: LoginPage(initialLoggedInState: false),
     );
   }
 }
 
 class LoginPage extends StatefulWidget {
-  bool initialLoggedInState; // initialLoggedInState 속성을 추가
+  bool initialLoggedInState;
 
   LoginPage({Key? key, required this.initialLoggedInState}) : super(key: key);
 
@@ -26,13 +28,8 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-
 class _LoginPageState extends State<LoginPage> {
-  // final String apiUrl = 'http://10.10.0.11:6002/DevCoop_Back/api/login';
-  // final String apiUrl = 'http://DevCoop_Back/api/login';
-  // final String apiUrl = 'http://DevCoop_Back:6002/api/login';
-  // final String apiUrl = 'http://10.10.0.11:6002/api/login';
-  final String apiUrl = "http://10.129.57.5:6002/api/login";
+  final String apiUrl = "http://10.129.57.5/api/login";
 
   final TextEditingController userEmailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -43,55 +40,53 @@ class _LoginPageState extends State<LoginPage> {
   String clientName = '';
   int userPoint = 0;
 
-  // 액세스 토큰을 저장하는 메서드
   Future<void> saveAccessToken(String token) async {
     try {
-      if (accToken != null && accToken is String) {
+      if (token != null && token.isNotEmpty) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString(accToken, token);
+        await prefs.setString('accToken', token);
       }
-    } catch(e) {
+    } catch (e) {
       print(e);
     }
   }
 
   Future<void> saveRefreshToken(String token) async {
     try {
-      if (refToken != null && refToken is String) {
+      if (token != null && token.isNotEmpty) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString(refToken, token);
+        await prefs.setString('refToken', token);
       }
-    } catch(e) {
+    } catch (e) {
       print(e);
     }
   }
 
   Future<void> saveClientName(String name) async {
     try {
-      if (clientName != null && clientName is String) {
+      if (name != null && name.isNotEmpty) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('clientName', name);
       }
-    } catch(e) {
+    } catch (e) {
       print(e);
     }
   }
 
   Future<void> saveUserPoint(int point) async {
     try {
-      int userPoint = point; // 포인트를 안전하게 int로 파싱
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('userPoint', userPoint); // 포인트를 'userPoint' 키로 저장
-    } catch(e) {
+      await prefs.setInt('userPoint', point);
+    } catch (e) {
       print(e);
     }
   }
 
+  CookieJar cookieJar = CookieJar();
+
   Future<void> _login(BuildContext context) async {
     String userEmail = userEmailController.text;
     String password = passwordController.text;
-
-    print("login button was clicked");
 
     Map<String, dynamic> requestData = {
       'email': userEmail,
@@ -99,10 +94,7 @@ class _LoginPageState extends State<LoginPage> {
     };
     String jsonData = json.encode(requestData);
 
-    print(jsonData);
-
     try {
-      print(apiUrl);
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {
@@ -110,52 +102,69 @@ class _LoginPageState extends State<LoginPage> {
         },
         body: jsonData,
       );
-      print(response);
 
       if (response.statusCode == 200) {
-        print("success!");
+        print("로그인 성공!");
+        print(response.headers);
+        print(response.headers['set-cookie']);
+
+        // 쿠키 추출 및 저장
+        String? setCookieHeader = response.headers['set-cookie'];
+        if (setCookieHeader != null) {
+          List<String> cookies = setCookieHeader.split(';');
+          for (String cookie in cookies) {
+            if (cookie.contains('accessToken')) {
+              final cookieParts = cookie.split('=');
+              final cookieName = cookieParts[0].trim();
+              final cookieValue = cookieParts[1].trim();
+              print(cookieValue);
+              print(cookieName);
+              await saveAccessToken(cookieValue);
+            } else if (cookie.contains('refreshToken')) {
+              final cookieParts = cookie.split('=');
+              final cookieName = cookieParts[0].trim();
+              final cookieValue = cookieParts[1].trim();
+              print(cookieValue);
+              print(cookieName);
+              await saveRefreshToken(cookieValue);
+            }
+            // cookie stirng 문자열 안에 accessToken or refreshToken이 포함되어 있으면 추출
+          }
+        }
+
         setState(() {
           responseText = "로그인 성공: ${response.body}";
           final jsonResponse = json.decode(response.body);
-          print(jsonResponse);
-          // JSON에서 토큰 추출
-          final String accessToken = jsonResponse['accToken'];
-          final String refreshToken = jsonResponse['refToken'];
-          print(accessToken);
-          // JSON에서 사용자 이름 추출
+          // print(jsonResponse);
+          // final String accessToken = jsonResponse['accToken'];
+          // final String refreshToken = jsonResponse['refToken'];
           final String name = jsonResponse['name'];
-          print(name);
-
-          // JSON에서 point 추출
-         int userPoint = jsonResponse['point'];
-
-          // 액세스 토큰을 저장합니다.
-          saveAccessToken(accessToken);
-          saveRefreshToken(refreshToken);
-
-          // 사용자 이름을 저장합니다
+          int userPoint = jsonResponse['point'];
+          // saveAccessToken(accessToken);
+          // saveRefreshToken(refreshToken);
           saveClientName(name);
-
-          // 사용자 point를 저장합니다
           saveUserPoint(userPoint);
-
           widget.initialLoggedInState = true;
         });
 
-        // 로그인 성공 시에는 Navigator를 사용하여 다음 화면으로 이동
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => MyApp(initialLoggedInState: widget.initialLoggedInState),
+            builder: (context) =>
+                MyApp(initialLoggedInState: widget.initialLoggedInState),
           ),
         );
       } else {
         setState(() {
-          responseText = "로그인 실패: ${response.statusCode}";
-          print("failed");
+          if (response.statusCode == null) {
+            responseText = "로그인 실패: 응답 상태 코드 없음";
+          } else {
+            responseText = "로그인 실패: ${response.statusCode}";
+          }
         });
       }
     } catch (e) {
+      print(e);
       setState(() {
         responseText = "오류 발생: $e";
       });
@@ -212,7 +221,7 @@ class _LoginPageState extends State<LoginPage> {
                 controller: passwordController,
                 decoration: InputDecoration(
                   labelText: '비밀번호를 입력해주세요',
-                  hintText: 'Enter your Password',
+                  hintText: '비밀번호 입력',
                   labelStyle: TextStyle(color: Colors.black),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),

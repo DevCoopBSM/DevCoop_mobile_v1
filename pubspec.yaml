@@ -34,6 +34,7 @@ dependencies:
   http: ^0.13.3 # Use the latest version of the http package
   provider: ^5.0.0
   shared_preferences: ^2.0.8  # 원하는 버전을 선택하세요
+  cookie_jar: ^2.0.0
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -9,11 +9,13 @@ final String accessTokenKey = 'accToken';
 final String refreshTokenKey = 'refToken';
 final String userPointKey = 'userPoint';
 
-void main() => runApp(
-  MaterialApp(
-    home: MyApp(initialLoggedInState: false),
-  ),
-);
+void main() async {
+  runApp(
+    MaterialApp(
+      home: MyApp(initialLoggedInState: false),
+    ),
+  );
+}
 
 class MyApp extends StatefulWidget {
   final bool initialLoggedInState;
@@ -99,8 +101,11 @@ class _MyAppState extends State<MyApp> {
   Future<void> _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.remove(accessTokenKey); // 수정: 'accToken' 대신 변수 사용
-    print("removed accToken");
+    prefs.remove('accToken'); // 수정: 'accToken' 대신 변수 사용
+    prefs.remove('refToken');
+    prefs.remove('clientName');
+    prefs.remove('userPoint');
+    print("removed userData");
 
     setState(() {
       isLoggedIn = !isLoggedIn; // 로그인 상태를 변경
@@ -125,11 +130,12 @@ class _MyAppState extends State<MyApp> {
           actions: [
             TextButton(
               onPressed: () {
-                isLoggedIn ? _logout(context) :
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginApp()),
-                );
+                isLoggedIn
+                    ? _logout(context)
+                    : Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginApp()),
+                      );
               },
               child: Text(
                 isLoggedIn ? "로그아웃" : "로그인", // 로그인 상태에 따라 버튼 텍스트 변경
@@ -180,9 +186,7 @@ class _MyAppState extends State<MyApp> {
                         : EdgeInsets.only(left: 10, right: 85, top: 30),
                     width: 200,
                     child: Text(
-                      isLoggedIn
-                          ? "${userPoint ?? null}원"
-                          : "로그인을 해주세요",
+                      isLoggedIn ? "${userPoint ?? null}원" : "로그인을 해주세요",
                       style: TextStyle(
                         fontSize: 26,
                         color: Colors.white,
@@ -209,7 +213,8 @@ class _MyAppState extends State<MyApp> {
                                 MaterialPageRoute(
                                   builder: (context) => ChargeUserLog(
                                     isLoggedIn: isLoggedIn, // isLoggedIn 전달
-                                    updateLoginStatus: updateLoginStatus, // updateLoginStatus 전달
+                                    updateLoginStatus:
+                                        updateLoginStatus, // updateLoginStatus 전달
                                   ),
                                 ),
                               );
@@ -234,7 +239,8 @@ class _MyAppState extends State<MyApp> {
                               MaterialPageRoute(
                                 builder: (context) => UseUserLog(
                                   isLoggedIn: isLoggedIn, // isLoggedIn 전달
-                                  updateLoginStatus: updateLoginStatus, // updateLoginStatus 전달
+                                  updateLoginStatus:
+                                      updateLoginStatus, // updateLoginStatus 전달
                                 ),
                               ),
                             );

@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.17.1"
+  cookie_jar:
+    dependency: "direct main"
+    description:
+      name: cookie_jar
+      sha256: "6a70766dbec044718f1ac82a47afd8dc94a3e64b8415c1c898781b82f43bf485"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   cupertino_icons:
     dependency: "direct main"
     description:
