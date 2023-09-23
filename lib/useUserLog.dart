@@ -5,9 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:aripay/main.dart';
 import 'package:aripay/login.dart';
 
-final String userPointKey = 'userPoint';
-final String accessTokenKey = 'accToken';
-final String refreshTokenKey = 'refToken';
+const String userPointKey = 'userPoint';
+const String accessTokenKey = 'accToken';
+const String refreshTokenKey = 'refToken';
 
 void main() {
   bool isLoggedIn = true;
@@ -67,7 +67,8 @@ class _UseUserLogState extends State<UseUserLog> {
     print("check");
     String? clientName = await getClientName();
     try {
-      final response = await http.get(Uri.parse('$apiUrl?clientname=$clientName')); // 클라이언트 이름을 요청에 포함
+      final response = await http
+          .get(Uri.parse('$apiUrl?clientname=$clientName')); // 클라이언트 이름을 요청에 포함
       print("response.body : ${response.body}");
 
       if (response.statusCode == 200) {
@@ -130,9 +131,9 @@ class _UseUserLogState extends State<UseUserLog> {
                 widget.isLoggedIn
                     ? _logout(context)
                     : Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginApp()),
-                );
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginApp()),
+                      );
               },
               child: Text(
                 widget.isLoggedIn ? "로그아웃" : "로그인",

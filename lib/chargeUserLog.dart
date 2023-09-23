@@ -67,7 +67,8 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
     print("check");
     String? clientName = await getClientName();
     try {
-      final response = await http.get(Uri.parse('$apiUrl?clientname=$clientName')); // 클라이언트 이름을 요청에 포함
+      final response = await http
+          .get(Uri.parse('$apiUrl?clientname=$clientName')); // 클라이언트 이름을 요청에 포함
       print("response.body : ${response.body}");
 
       if (response.statusCode == 200) {
@@ -130,9 +131,9 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
                 widget.isLoggedIn
                     ? _logout(context)
                     : Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginApp()),
-                );
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginApp()),
+                      );
               },
               child: Text(
                 widget.isLoggedIn ? "로그아웃" : "로그인",
@@ -151,7 +152,7 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
                 children: [
                   Container(
                     margin: EdgeInsets.only(top: 30, left: 15),
-                    child: Text(
+                    child: const Text(
                       "남은 금액",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -164,7 +165,7 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
                     margin: EdgeInsets.only(top: 30, right: 15),
                     child: Text(
                       "${widget.isLoggedIn ? userPoint ?? "" : ""} 원",
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
                       ),
@@ -184,7 +185,7 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
                 children: [
                   Container(
                     margin: EdgeInsets.only(left: 15),
-                    child: Text(
+                    child: const Text(
                       "사용내역",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
