@@ -5,9 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:aripay/main.dart';
 import 'package:aripay/login.dart';
 
-const String userPointKey = 'userPoint';
-const String accessTokenKey = 'accToken';
-const String refreshTokenKey = 'refToken';
+final String userPointKey = 'userPoint';
+final String accessTokenKey = 'accToken';
+final String refreshTokenKey = 'refToken';
 
 void main() {
   bool isLoggedIn = true;
