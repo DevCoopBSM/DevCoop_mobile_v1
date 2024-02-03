@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:aripay/main.dart';
 import 'package:get/get.dart';
 
-void main() {
-  runApp(NotFound());
-}
-
 class NotFound extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
