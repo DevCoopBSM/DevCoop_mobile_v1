@@ -24,7 +24,7 @@ Future<void> saveRefreshToken(String token) async {
 
 Future<void> saveClientName(String name) async {
   try {
-    if (name != null && name.isNotEmpty) {
+    if (name != "" && name.isNotEmpty) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('clientName', name);
     }
