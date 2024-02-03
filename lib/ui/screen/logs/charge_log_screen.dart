@@ -29,7 +29,6 @@ class _ChargeUserLogState extends State<ChargeLogScreen> {
   }
 
   Future<void> loadSavedData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userPoint = await loadUserPoint();
     setState(() {
       this.userPoint = userPoint;
@@ -189,7 +188,6 @@ class ContainerList extends StatelessWidget {
         final item = data[index];
         String date = item['date'];
         String innerPoint = item['inner_point'].toString();
-        String type = item['type'].toString();
 
         return Container(
           width: 900,
