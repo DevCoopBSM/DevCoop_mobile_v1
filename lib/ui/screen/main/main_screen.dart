@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
                 ),
               ],
             ),
-            width: 400,
+            // width: 400,
             height: 180,
             child: Column(
               children: [
@@ -73,7 +73,7 @@ class _MyAppState extends State<MyApp> {
                 ),
                 Container(
                   margin: const EdgeInsets.only(left: 10, right: 85, top: 30),
-                  width: 200,
+                  // width: 200,
                   child: const Text(
                     "로그인을 해주세요",
                     style: TextStyle(
@@ -103,7 +103,7 @@ class _MyAppState extends State<MyApp> {
                 ),
               ],
             ),
-            width: 400,
+            // width: 400,
             height: 100,
             child: Column(
               children: [
@@ -171,7 +171,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ],
               ),
-              width: 400,
+              // width: 400,
               height: 150,
               child: Stack(
                 children: [
@@ -221,7 +221,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ],
               ),
-              width: 400,
+              // width: 400,
               height: 150,
               child: const Padding(
                 padding: EdgeInsets.only(left: 20.0),

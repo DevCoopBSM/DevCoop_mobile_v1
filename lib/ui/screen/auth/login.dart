@@ -121,11 +121,11 @@ class _LoginPageState extends State<LoginPage> {
                 child: Image.asset(
                   "assets/AriPayL.png",
                   fit: BoxFit.cover,
-                  width: 100,
+                  // width: 100,
                 ),
               ),
               SizedBox(
-                width: 300,
+                // width: 300,
                 child: TextField(
                   controller: userEmailController,
                   decoration: const InputDecoration(
@@ -151,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                 margin: const EdgeInsets.all(10),
               ),
               SizedBox(
-                width: 300,
+                // width: 300,
                 child: TextField(
                   obscureText: true,
                   controller: passwordController,

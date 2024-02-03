@@ -98,7 +98,7 @@ class _UseUserLogState extends State<UseUserLog> {
             children: [
               Image.asset(
                 "assets/AriPayL_ver2.png",
-                width: 100,
+                // width: 100,
               ),
             ],
           ),
@@ -209,7 +209,7 @@ class ContainerList extends StatelessWidget {
         String innerPoint = item['inner_point'].toString();
 
         return Container(
-          width: 900,
+          // width: 900,
           height: 70,
           margin: const EdgeInsets.all(10),
           alignment: Alignment.center,
