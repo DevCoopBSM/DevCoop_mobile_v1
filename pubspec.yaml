@@ -2,7 +2,7 @@ name: aripay
 description: AriPay app
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.6 <4.0.0'
+  sdk: ">=3.0.6 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,12 +30,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  url_launcher: ^6.0.6 # 버전은 패키지의 최신 버전에 맞게 설정하세요.
-  http: ^0.13.3 # Use the latest version of the http package
-  provider: ^5.0.0
-  shared_preferences: ^2.0.8  # 원하는 버전을 선택하세요
-  cookie_jar: ^2.0.0
-
+  url_launcher: ^6.1.14
+  http: ^1.1.0
+  shared_preferences: ^2.2.2
+  cookie_jar: ^4.0.8
+  get: ^4.3.8
+  flutter_screenutil: ^5.9.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -44,7 +44,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -58,7 +57,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -66,9 +64,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-     - assets/AriPayL.png
-     - assets/404.png
-     - assets/AriPayL_ver2.png
-     - assets/aripayask.png
-     - assets/aripay.png
-     - assets/filter.png
+    - assets/AriPayL.png
+    - assets/404.png
+    - assets/AriPayL_ver2.png
+    - assets/aripayask.png
+    - assets/aripay.png
+    - assets/filter.png

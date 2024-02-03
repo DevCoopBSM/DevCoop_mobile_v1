@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:aripay/main.dart';
-import 'package:aripay/login.dart';
+import 'package:aripay/ui/screen/auth/login.dart';
 
 final String userPointKey = 'userPoint';
 final String accessTokenKey = 'accToken';
@@ -11,7 +12,7 @@ final String refreshTokenKey = 'refToken';
 
 void main() {
   bool isLoggedIn = true;
-  runApp(ChargeUserLog(
+  runApp(UseUserLog(
     isLoggedIn: isLoggedIn,
     updateLoginStatus: (bool status) {
       isLoggedIn = status;
@@ -19,19 +20,19 @@ void main() {
   ));
 }
 
-class ChargeUserLog extends StatefulWidget {
+class UseUserLog extends StatefulWidget {
   final bool isLoggedIn;
   final Function(bool) updateLoginStatus;
 
-  ChargeUserLog({required this.isLoggedIn, required this.updateLoginStatus});
+  UseUserLog({required this.isLoggedIn, required this.updateLoginStatus});
 
   @override
-  _ChargeUserLogState createState() => _ChargeUserLogState();
+  _UseUserLogState createState() => _UseUserLogState();
 }
 
-class _ChargeUserLogState extends State<ChargeUserLog> {
+class _UseUserLogState extends State<UseUserLog> {
   String _responseData = ''; // 서버 응답 데이터를 저장할 변수
-  final apiUrl = 'http://10.129.57.5/api/chargeuserlog';
+  final apiUrl = 'http://10.129.57.5/api/payuserlog';
   int? userPoint;
 
   @override
@@ -101,12 +102,7 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
 
     widget.updateLoginStatus(false);
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MyApp(initialLoggedInState: false),
-      ),
-    );
+    Get.toNamed("/");
   }
 
   @override
@@ -128,16 +124,11 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
             TextButton(
               onPressed: () {
                 print(widget.isLoggedIn);
-                widget.isLoggedIn
-                    ? _logout(context)
-                    : Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginApp()),
-                      );
+                widget.isLoggedIn ? _logout(context) : Get.toNamed("/login");
               },
               child: Text(
                 widget.isLoggedIn ? "로그아웃" : "로그인",
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                 ),
               ),
@@ -151,7 +142,7 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(top: 30, left: 15),
+                    margin: const EdgeInsets.only(top: 30, left: 15),
                     child: const Text(
                       "남은 금액",
                       style: TextStyle(
@@ -176,7 +167,7 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
               Container(
                 margin: EdgeInsets.all(10),
               ),
-              Divider(
+              const Divider(
                 color: Colors.black12,
                 thickness: 2.0,
               ),
@@ -185,7 +176,7 @@ class _ChargeUserLogState extends State<ChargeUserLog> {
                 children: [
                   Container(
                     margin: EdgeInsets.only(left: 15),
-                    child: const Text(
+                    child: Text(
                       "사용내역",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -241,9 +232,9 @@ class ContainerList extends StatelessWidget {
           height: 70,
           margin: EdgeInsets.all(10),
           alignment: Alignment.center,
-          child: Text('$date        $innerPoint원       충전'),
+          child: Text('$date        $innerPoint원       결제'),
           decoration: BoxDecoration(
-            color: Color.fromRGBO(230, 235, 255, 1.0),
+            color: Color(0xFFE7E7E7),
             borderRadius: BorderRadius.circular(10),
           ),
         );

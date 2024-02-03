@@ -3,35 +3,18 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:aripay/main.dart';
-import 'package:aripay/login.dart';
+import 'package:aripay/ui/screen/auth/login.dart';
 
-final String userPointKey = 'userPoint';
-final String accessTokenKey = 'accToken';
-final String refreshTokenKey = 'refToken';
-
-void main() {
-  bool isLoggedIn = true;
-  runApp(UseUserLog(
-    isLoggedIn: isLoggedIn,
-    updateLoginStatus: (bool status) {
-      isLoggedIn = status;
-    },
-  ));
-}
-
-class UseUserLog extends StatefulWidget {
-  final bool isLoggedIn;
-  final Function(bool) updateLoginStatus;
-
-  UseUserLog({required this.isLoggedIn, required this.updateLoginStatus});
+class ChargeLogScreen extends StatefulWidget {
+  const ChargeLogScreen({super.key});
 
   @override
-  _UseUserLogState createState() => _UseUserLogState();
+  _ChargeUserLogState createState() => _ChargeUserLogState();
 }
 
-class _UseUserLogState extends State<UseUserLog> {
+class _ChargeUserLogState extends State<ChargeLogScreen> {
   String _responseData = ''; // 서버 응답 데이터를 저장할 변수
-  final apiUrl = 'http://10.129.57.5/api/payuserlog';
+  final apiUrl = 'http://10.129.57.5/api/chargeuserlog';
   int? userPoint;
 
   @override
@@ -43,7 +26,7 @@ class _UseUserLogState extends State<UseUserLog> {
 
   Future<int?> loadUserPoint() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? userPoint = prefs.getInt(userPointKey);
+    int? userPoint = prefs.getInt('userPoint');
     return userPoint ?? 0; // 기본값으로 0을 반환하도록 수정
   }
 
@@ -94,21 +77,6 @@ class _UseUserLogState extends State<UseUserLog> {
     }
   }
 
-  Future<void> _logout(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove(accessTokenKey);
-    print("accToken 제거됨");
-
-    widget.updateLoginStatus(false);
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MyApp(initialLoggedInState: false),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -127,20 +95,9 @@ class _UseUserLogState extends State<UseUserLog> {
           actions: [
             TextButton(
               onPressed: () {
-                print(widget.isLoggedIn);
-                widget.isLoggedIn
-                    ? _logout(context)
-                    : Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginApp()),
-                      );
+                null;
               },
-              child: Text(
-                widget.isLoggedIn ? "로그아웃" : "로그인",
-                style: TextStyle(
-                  color: Colors.black,
-                ),
-              ),
+              child: Text("로그인"),
             ),
           ],
         ),
@@ -151,8 +108,8 @@ class _UseUserLogState extends State<UseUserLog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(top: 30, left: 15),
-                    child: Text(
+                    margin: const EdgeInsets.only(top: 30, left: 15),
+                    child: const Text(
                       "남은 금액",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -164,8 +121,8 @@ class _UseUserLogState extends State<UseUserLog> {
                   Container(
                     margin: EdgeInsets.only(top: 30, right: 15),
                     child: Text(
-                      "${widget.isLoggedIn ? userPoint ?? "" : ""} 원",
-                      style: TextStyle(
+                      "더미 텍스트",
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
                       ),
@@ -174,9 +131,9 @@ class _UseUserLogState extends State<UseUserLog> {
                 ],
               ),
               Container(
-                margin: EdgeInsets.all(10),
+                margin: const EdgeInsets.all(10),
               ),
-              Divider(
+              const Divider(
                 color: Colors.black12,
                 thickness: 2.0,
               ),
@@ -184,8 +141,8 @@ class _UseUserLogState extends State<UseUserLog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(left: 15),
-                    child: Text(
+                    margin: const EdgeInsets.only(left: 15),
+                    child: const Text(
                       "사용내역",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -195,7 +152,7 @@ class _UseUserLogState extends State<UseUserLog> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(right: 15),
+                    margin: const EdgeInsets.only(right: 15),
                     child: Image.asset(
                       "assets/filter.png",
                       height: 20,
@@ -204,7 +161,7 @@ class _UseUserLogState extends State<UseUserLog> {
                 ],
               ),
               Container(
-                margin: EdgeInsets.all(10),
+                margin: const EdgeInsets.all(10),
               ),
               ContainerList(responseData: _responseData),
             ],
@@ -228,7 +185,7 @@ class ContainerList extends StatelessWidget {
 
     return ListView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: data.length, // 데이터의 개수로 itemCount를 설정
       itemBuilder: (BuildContext context, int index) {
         final item = data[index];
@@ -241,9 +198,9 @@ class ContainerList extends StatelessWidget {
           height: 70,
           margin: EdgeInsets.all(10),
           alignment: Alignment.center,
-          child: Text('$date        $innerPoint원       결제'),
+          child: Text('$date        $innerPoint원       충전'),
           decoration: BoxDecoration(
-            color: Color(0xFFE7E7E7),
+            color: Color.fromRGBO(230, 235, 255, 1.0),
             borderRadius: BorderRadius.circular(10),
           ),
         );
