@@ -91,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
         Get.toNamed("/");
       } else {
         setState(() {
-          if (response.statusCode == null) {
+          if (response.statusCode != 200) {
             responseText = "로그인 실패: 응답 상태 코드 없음";
           } else {
             responseText = "로그인 실패: ${response.statusCode}";
