@@ -4,15 +4,12 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final String userPointKey = 'userPoint';
-final String accessTokenKey = 'accToken';
-final String refreshTokenKey = 'refToken';
+const String userPointKey = 'userPoint';
+const String accessTokenKey = 'accToken';
+const String refreshTokenKey = 'refToken';
 
 class UseUserLog extends StatefulWidget {
-  final bool isLoggedIn;
-  final Function(bool) updateLoginStatus;
-
-  UseUserLog({required this.isLoggedIn, required this.updateLoginStatus});
+  const UseUserLog({super.key});
 
   @override
   _UseUserLogState createState() => _UseUserLogState();
@@ -87,8 +84,6 @@ class _UseUserLogState extends State<UseUserLog> {
     prefs.remove(accessTokenKey);
     print("accToken 제거됨");
 
-    widget.updateLoginStatus(false);
-
     Get.toNamed("/");
   }
 
@@ -110,12 +105,11 @@ class _UseUserLogState extends State<UseUserLog> {
           actions: [
             TextButton(
               onPressed: () {
-                print(widget.isLoggedIn);
-                widget.isLoggedIn ? _logout(context) : Get.toNamed("/login");
+                null;
               },
-              child: Text(
-                widget.isLoggedIn ? "로그아웃" : "로그인",
-                style: const TextStyle(
+              child: const Text(
+                "로그인",
+                style: TextStyle(
                   color: Colors.black,
                 ),
               ),
@@ -141,9 +135,9 @@ class _UseUserLogState extends State<UseUserLog> {
                   ),
                   Container(
                     margin: const EdgeInsets.only(top: 30, right: 15),
-                    child: Text(
-                      "${widget.isLoggedIn ? userPoint ?? "" : ""} 원",
-                      style: const TextStyle(
+                    child: const Text(
+                      "원",
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
                       ),
@@ -196,7 +190,8 @@ class _UseUserLogState extends State<UseUserLog> {
 class ContainerList extends StatelessWidget {
   final String responseData;
 
-  ContainerList({
+  const ContainerList({
+    super.key,
     required this.responseData,
   });
 
@@ -218,11 +213,11 @@ class ContainerList extends StatelessWidget {
           height: 70,
           margin: const EdgeInsets.all(10),
           alignment: Alignment.center,
-          child: Text('$date        $innerPoint원       결제'),
           decoration: BoxDecoration(
             color: const Color(0xFFE7E7E7),
             borderRadius: BorderRadius.circular(10),
           ),
+          child: Text('$date        $innerPoint원       결제'),
         );
       },
     );

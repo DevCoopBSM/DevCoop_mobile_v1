@@ -118,7 +118,7 @@ class _ChargeUserLogState extends State<ChargeLogScreen> {
                   margin: const EdgeInsets.only(top: 30, right: 15),
                   child: const Text(
                     "더미 텍스트",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
                     ),
@@ -170,7 +170,8 @@ class _ChargeUserLogState extends State<ChargeLogScreen> {
 class ContainerList extends StatelessWidget {
   final String responseData;
 
-  ContainerList({
+  const ContainerList({
+    super.key,
     required this.responseData,
   });
 
@@ -190,13 +191,13 @@ class ContainerList extends StatelessWidget {
         return Container(
           width: 900,
           height: 70,
-          margin: EdgeInsets.all(10),
+          margin: const EdgeInsets.all(10),
           alignment: Alignment.center,
-          child: Text('$date        $innerPoint원       충전'),
           decoration: BoxDecoration(
-            color: Color.fromRGBO(230, 235, 255, 1.0),
+            color: const Color.fromRGBO(230, 235, 255, 1.0),
             borderRadius: BorderRadius.circular(10),
           ),
+          child: Text('$date        $innerPoint원       충전'),
         );
       },
     );

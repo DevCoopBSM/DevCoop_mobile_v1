@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> saveAccessToken(String token) async {
   try {
-    if (token != null && token.isNotEmpty) {
+    if (token != "" && token.isNotEmpty) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('accToken', token);
     }
@@ -13,7 +13,7 @@ Future<void> saveAccessToken(String token) async {
 
 Future<void> saveRefreshToken(String token) async {
   try {
-    if (token != null && token.isNotEmpty) {
+    if (token != "" && token.isNotEmpty) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('refToken', token);
     }

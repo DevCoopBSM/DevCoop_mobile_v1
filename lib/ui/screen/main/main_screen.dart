@@ -9,7 +9,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool isLoggedIn = false;
   int? userPoint;
 
   @override
@@ -29,9 +28,9 @@ class _MyAppState extends State<MyApp> {
         actions: [
           TextButton(
             onPressed: () {},
-            child: Text(
-              isLoggedIn ? "로그아웃" : "로그인", // 로그인 상태에 따라 버튼 텍스트 변경
-              style: const TextStyle(
+            child: const Text(
+              "로그인", // 로그인 상태에 따라 버튼 텍스트 변경
+              style: TextStyle(
                 color: Colors.black,
               ),
             ),
@@ -73,13 +72,11 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ),
                 Container(
-                  margin: isLoggedIn
-                      ? const EdgeInsets.only(left: 30, right: 220, top: 30)
-                      : const EdgeInsets.only(left: 10, right: 85, top: 30),
+                  margin: const EdgeInsets.only(left: 10, right: 85, top: 30),
                   width: 200,
-                  child: Text(
-                    isLoggedIn ? "${userPoint ?? null}원" : "로그인을 해주세요",
-                    style: const TextStyle(
+                  child: const Text(
+                    "로그인을 해주세요",
+                    style: TextStyle(
                       fontSize: 26,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -102,7 +99,7 @@ class _MyAppState extends State<MyApp> {
                   color: Colors.grey.withOpacity(0.5),
                   spreadRadius: 2,
                   blurRadius: 2,
-                  offset: Offset(2, 4),
+                  offset: const Offset(2, 4),
                 ),
               ],
             ),
@@ -114,7 +111,7 @@ class _MyAppState extends State<MyApp> {
                   children: [
                     Flexible(
                       child: Container(
-                        margin: EdgeInsets.only(top: 30, left: 20),
+                        margin: const EdgeInsets.only(top: 30, left: 20),
                         child: TextButton(
                           onPressed: () {
                             Get.toNamed("/chargeLog");
@@ -214,7 +211,7 @@ class _MyAppState extends State<MyApp> {
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
                 ),
-                color: Color.fromRGBO(240, 206, 0, 1.0),
+                color: const Color.fromRGBO(240, 206, 0, 1.0),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.5),
