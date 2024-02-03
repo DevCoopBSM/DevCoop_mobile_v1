@@ -76,93 +76,91 @@ class _ChargeUserLogState extends State<ChargeLogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Image.asset(
-                "assets/AriPayL_ver2.png",
-                width: 100,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                null;
-              },
-              child: Text("로그인"),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Image.asset(
+              "assets/AriPayL_ver2.png",
+              width: 100,
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 30, left: 15),
-                    child: const Text(
-                      "남은 금액",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.black45,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 30, right: 15),
-                    child: Text(
-                      "더미 텍스트",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                margin: const EdgeInsets.all(10),
-              ),
-              const Divider(
-                color: Colors.black12,
-                thickness: 2.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(left: 15),
-                    child: const Text(
-                      "사용내역",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(right: 15),
-                    child: Image.asset(
-                      "assets/filter.png",
-                      height: 20,
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                margin: const EdgeInsets.all(10),
-              ),
-              ContainerList(responseData: _responseData),
-            ],
+        actions: [
+          TextButton(
+            onPressed: () {
+              null;
+            },
+            child: Text("로그인"),
           ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 30, left: 15),
+                  child: const Text(
+                    "남은 금액",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.black45,
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 30, right: 15),
+                  child: const Text(
+                    "더미 텍스트",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              margin: const EdgeInsets.all(10),
+            ),
+            const Divider(
+              color: Colors.black12,
+              thickness: 2.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 15),
+                  child: const Text(
+                    "사용내역",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(right: 15),
+                  child: Image.asset(
+                    "assets/filter.png",
+                    height: 20,
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              margin: const EdgeInsets.all(10),
+            ),
+            ContainerList(responseData: _responseData),
+          ],
         ),
       ),
     );

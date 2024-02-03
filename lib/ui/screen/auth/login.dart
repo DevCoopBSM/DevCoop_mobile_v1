@@ -181,7 +181,6 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   _login(context);
                 },
-                child: Text("로그인"),
                 style: ElevatedButton.styleFrom(
                   // primary: Colors.yellow,
                   // onPrimary: Colors.black,
@@ -196,6 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                child: const Text("로그인"),
               ),
               Container(
                 margin: const EdgeInsets.all(5),

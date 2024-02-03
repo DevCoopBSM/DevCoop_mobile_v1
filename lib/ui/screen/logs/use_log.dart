@@ -8,16 +8,6 @@ final String userPointKey = 'userPoint';
 final String accessTokenKey = 'accToken';
 final String refreshTokenKey = 'refToken';
 
-void main() {
-  bool isLoggedIn = true;
-  runApp(UseUserLog(
-    isLoggedIn: isLoggedIn,
-    updateLoginStatus: (bool status) {
-      isLoggedIn = status;
-    },
-  ));
-}
-
 class UseUserLog extends StatefulWidget {
   final bool isLoggedIn;
   final Function(bool) updateLoginStatus;
@@ -173,7 +163,7 @@ class _UseUserLogState extends State<UseUserLog> {
                 children: [
                   Container(
                     margin: const EdgeInsets.only(left: 15),
-                    child: Text(
+                    child: const Text(
                       "사용내역",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
